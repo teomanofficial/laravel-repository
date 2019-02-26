@@ -205,17 +205,17 @@ class MakeRepository extends Command
      */
     protected function updateConfig(): void
     {
-        config("repository.map")[$this->key ?? strtolower($this->model)] = $this->model . "Repository";
+        $config = config("repository");
+        $config["map"][$this->key ?? strtolower($this->model)] = $this->model . "Repository";
 
-        $path = config_path("repository.php");
-
-        $dump = var_export(config("repository"), true);
+        $dump = var_export($config, true);
         $dump = preg_replace('#(?:\A|\n)([ ]*)array \(#i', '[', $dump);
         $dump = preg_replace('#\n([ ]*)\),#', "\n$1],", $dump);
         $dump = preg_replace('#\n\)#', "\n];", $dump);
         $dump = preg_replace('#=> \[\n\s+\],\n#', "=> [],\n", $dump);
 
         $content = "<?php \n\n return " . $dump;
+        $path = config_path("repository.php");
 
         file_put_contents($path, $content);
     }

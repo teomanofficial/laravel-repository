@@ -1,0 +1,14 @@
+<?php
+namespace :namespace;
+
+abstract class BaseRepository
+{
+   protected $model;
+
+   protected $query;
+
+    public function findBy(...$attribute)
+    {
+       return $this->query->where(...$attribute)->first();
+    }
+}

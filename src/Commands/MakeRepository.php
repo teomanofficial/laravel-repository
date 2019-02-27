@@ -73,9 +73,12 @@ class MakeRepository extends Command
             return;
         };
 
-        $repository = $this->makeRepository();
+        $content = $this->makeRepository();
 
-        $this->write($repository);
+        $path = base_path(config("repository.path"));
+        $filepath = $path . DIRECTORY_SEPARATOR . $this->model . "Repository.php";
+
+        $this->write($content, $filepath);
 
         $this->updateConfig();
 
@@ -153,7 +156,7 @@ class MakeRepository extends Command
             trim(config("repository.namespace"), self::BACKSLASH),
         ], $plainBaseRepositoryContent);
         $filepath = base_path(config("repository.path")) . DIRECTORY_SEPARATOR . "BaseRepository.php";
-        file_put_contents($filepath, $baseRepositoryContent);
+        $this->write($baseRepositoryContent, $filepath);
         $this->line("BaseRepository created successfully");
     }
 
@@ -189,14 +192,12 @@ class MakeRepository extends Command
 
     /**
      * Write repository to given path (config/repository.php path)
-     * @param $repository
+     * @param $content
+     * @param $filepath
      */
-    protected function write($repository): void
+    protected function write($content, $filepath): void
     {
-        $path = base_path(config("repository.path"));
-        $filepath = $path . DIRECTORY_SEPARATOR . $this->model . "Repository.php";
-
-        file_put_contents($filepath, $repository);
+        file_put_contents($filepath, $content);
     }
 
     /**
@@ -215,9 +216,9 @@ class MakeRepository extends Command
         $dump = preg_replace('#=> \[\n\s+\],\n#', "=> [],\n", $dump);
 
         $content = "<?php \n\n return " . $dump;
-        $path = config_path("repository.php");
+        $file = config_path("repository.php");
 
-        file_put_contents($path, $content);
+        $this->write($content, $file);
     }
 
 }
